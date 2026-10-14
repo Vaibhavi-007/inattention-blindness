@@ -1,0 +1,19 @@
+{
+  "name": "inattention-blindness-lab",
+  "version": "1.0.0",
+  "description": "Inattention & Change Blindness cognitive experiment platform - prototype for Rishab Bajaj",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "inattention-blindness",
+    "change-blindness",
+    "psychology",
+    "cognitive-science",
+    "reaction-time"
+  ],
+  "author": "Rishab Bajaj",
+  "license": "MIT"
+}
