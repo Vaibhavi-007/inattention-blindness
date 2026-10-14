@@ -9,7 +9,7 @@
 </head>
 <body>
 
-  <!-- Top App Navigation Bar -->
+  <!-- Top App Navigation Bar (Compact 48px) -->
   <header class="app-header">
     <div class="header-container">
       <div class="brand">
@@ -25,87 +25,86 @@
           <span class="avatar">RB</span>
           <span id="badge-username">Rishab Bajaj</span>
         </div>
+        <button id="btn-fullscreen" class="btn btn-outline btn-sm" title="Toggle Fullscreen (F)">⛶ Fullscreen</button>
         <button id="btn-sound-toggle" class="btn btn-outline btn-sm">🔊 Sound On</button>
         <button id="btn-nav-history" class="btn btn-secondary btn-sm">📊 Past Sessions</button>
       </div>
     </div>
   </header>
 
-  <!-- Main App Workspace -->
+  <!-- Main Viewport-Locked Workspace (100% Fit, Zero Page Scroll) -->
   <main>
 
     <!-- VIEW 1: Setup & Protocol Screen -->
     <section id="view-setup" class="view-panel active">
       <div class="welcome-card">
-        <h2 class="welcome-title">Inattention Blindness Experiment</h2>
-        <p class="welcome-desc">
-          Inattention blindness (and change blindness) is the psychological phenomenon where observers fail to notice a significant visual change when a brief disruption—such as a blank screen or eye blink—masks the natural motion cues that ordinarily draw focal attention.
-        </p>
+        <div class="welcome-header">
+          <h2 class="welcome-title">Inattention Blindness Experiment</h2>
+          <p class="welcome-desc">
+            Inattention and change blindness occur when observers fail to detect visual alterations masked by a brief disruption (blank screen or flicker), neutralizing ocular motion transients.
+          </p>
+        </div>
 
         <!-- 3-Phase Scientific Protocol Explanation -->
         <div class="protocol-steps">
           <div class="protocol-box">
             <div class="protocol-num">Phase 01</div>
             <h4>Initial Stimulus</h4>
-            <p>An intricate visual scene is presented for a brief duration. Absorb the entire composition.</p>
+            <p>An intricate visual scene is presented for study. Absorb the overall composition.</p>
           </div>
 
           <div class="protocol-box">
             <div class="protocol-num">Phase 02</div>
-            <h4>Black Screen (Mask)</h4>
-            <p>A momentary black screen disrupts ocular motion transients, clearing retinal persistence.</p>
+            <h4>Black Mask</h4>
+            <p>A momentary black screen disrupts motion transients, clearing retinal persistence.</p>
           </div>
 
           <div class="protocol-box">
             <div class="protocol-num">Phase 03</div>
             <h4>Spot The Change</h4>
-            <p>The scene reappears with a single element altered. Click directly on the changed area as fast as possible.</p>
+            <p>Scene reappears with a single change. Click directly on the altered area as fast as you can.</p>
           </div>
         </div>
 
         <!-- Setup Configuration Form -->
         <div class="setup-form-grid">
           <div class="form-group">
-            <label for="input-username">Participant / Subject Name</label>
+            <label for="input-username">Subject Name</label>
             <input type="text" id="input-username" class="form-input" value="Rishab Bajaj" placeholder="Enter participant name">
-            <span style="font-size:0.75rem; color:var(--text-dim);">Pre-configured for client demonstration.</span>
           </div>
 
           <div class="form-group">
-            <label for="select-paradigm">Experiment Paradigm</label>
+            <label for="select-paradigm">Paradigm</label>
             <select id="select-paradigm" class="form-input">
-              <option value="single-flicker" selected>Single Flicker (Standard Protocol)</option>
-              <option value="continuous-flicker">Continuous Flicker (Rensink Paradigm)</option>
+              <option value="single-flicker" selected>Single Flicker (Standard)</option>
+              <option value="continuous-flicker">Continuous Flicker (Rensink)</option>
             </select>
-            <span style="font-size:0.75rem; color:var(--text-dim);">Single-shot or continuous alternating flicker.</span>
           </div>
 
           <div class="form-group">
-            <label for="input-stimulus-time">Initial Image Duration (ms)</label>
+            <label for="input-stimulus-time">Image Duration</label>
             <input type="number" id="input-stimulus-time" class="form-input" value="2500" min="1000" max="6000" step="500">
-            <span style="font-size:0.75rem; color:var(--text-dim);">Default: 2,500ms (2.5 seconds)</span>
           </div>
 
           <div class="form-group">
-            <label for="input-blank-time">Black Screen / Mask Duration (ms)</label>
+            <label for="input-blank-time">Blank Interval</label>
             <input type="number" id="input-blank-time" class="form-input" value="350" min="100" max="1000" step="50">
-            <span style="font-size:0.75rem; color:var(--text-dim);">Default: 350ms (Inter-stimulus interval)</span>
           </div>
         </div>
 
         <!-- Start CTA -->
         <div class="setup-actions">
-          <div style="font-size:0.85rem; color:var(--text-muted);">
-            ⚡ <strong>Battery:</strong> 6 Distinct Environmental Scenarios
+          <div class="setup-battery-hint">
+            ⚡ <strong>Battery:</strong> 6 Detailed Environmental Scenarios
           </div>
-          <button id="btn-start-experiment" class="btn btn-primary" style="padding:0.75rem 2rem; font-size:1.05rem;">
-            Begin Experiment →
+          <button id="btn-start-experiment" class="btn btn-primary btn-cta">
+            Begin Experiment <span class="kbd-pill">Space ↵</span>
           </button>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 2: Experiment Stage Screen -->
+    <!-- VIEW 2: Immersive Fullscreen Experiment Stage -->
     <section id="view-experiment" class="view-panel">
       <div class="stage-container">
 
@@ -115,8 +114,8 @@
             <div id="stage-pill" class="phase-pill preview">● Phase 1: Study Initial Image</div>
             <div id="trial-indicator" class="trial-indicator">Trial 1 of 6: Downtown Intersection</div>
           </div>
-          <div style="display:flex; align-items:center; gap:0.75rem;">
-            <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Reaction Time:</span>
+          <div class="rt-container">
+            <span class="rt-label">Reaction Time:</span>
             <div id="rt-ticker" class="rt-ticker">0.000s</div>
           </div>
         </div>
@@ -126,45 +125,53 @@
           <div id="progress-bar-fill" class="progress-bar-fill"></div>
         </div>
 
-        <!-- Visual Display Arena -->
-        <div id="arena-card" class="arena-card">
-          <div id="arena-content" class="arena-content"></div>
-          <div id="arena-overlay" class="arena-overlay-message" style="display:none;">Preparing...</div>
+        <!-- Visual Display Arena (Auto-Fitting Aspect-Ratio Container) -->
+        <div class="arena-wrapper">
+          <div id="arena-card" class="arena-card">
+            <div id="arena-content" class="arena-content"></div>
+            <div id="arena-overlay" class="arena-overlay-message" style="display:none;">Preparing...</div>
+          </div>
         </div>
 
-        <!-- Feedback & Next Action Bar -->
-        <div id="feedback-banner" class="feedback-banner" style="display:none;">
-          <div id="feedback-text">Trial Result</div>
-          <button id="btn-next-trial" class="btn btn-primary btn-sm">Next Trial (Space) →</button>
-        </div>
+        <!-- Integrated Bottom Action Dock (Zero Layout Shifts) -->
+        <div class="arena-dock">
+          <!-- Waiting prompt -->
+          <div id="prompt-idle" class="dock-prompt">
+            <span>🎯 <strong>Instructions:</strong> Click directly on the element you believe has changed.</span>
+            <span class="dock-shortcut">Press <kbd class="kbd-pill">Space</kbd> anytime during feedback to advance</span>
+          </div>
 
-        <!-- Instructions footer -->
-        <div class="arena-footer">
-          <span>Click directly on the element you believe has changed.</span>
-          <span>Tip: Press <strong>Space</strong> to advance to the next trial.</span>
+          <!-- Dynamic Feedback Banner -->
+          <div id="feedback-banner" class="dock-feedback" style="display:none;">
+            <div id="feedback-text" class="feedback-msg">Trial Result</div>
+            <button id="btn-next-trial" class="btn btn-primary btn-sm">
+              Next Trial <span class="kbd-pill">Space ↵</span>
+            </button>
+          </div>
         </div>
 
       </div>
     </section>
 
-    <!-- VIEW 3: Results & Analytics Screen -->
+    <!-- VIEW 3: Results & Analytics Screen (Zero Scroll Viewport Fit) -->
     <section id="view-results" class="view-panel">
       <div class="results-card">
 
+        <!-- Header with immediate action buttons -->
         <div class="results-header">
           <div>
             <h2>Session Diagnostic Report</h2>
-            <div style="color:var(--text-muted); font-size:0.9rem; margin-top:0.25rem;">
-              Subject: <strong id="res-participant" style="color:var(--text-main);">Rishab Bajaj</strong> | Completed Battery
+            <div class="results-sub">
+              Subject: <strong id="res-participant" style="color:var(--text-main);">Rishab Bajaj</strong> | Completed Test Battery
             </div>
           </div>
 
-          <div style="display:flex; gap:0.75rem;">
-            <button id="btn-download-csv" class="btn btn-secondary">
-              📥 Export CSV Data
+          <div class="results-actions">
+            <button id="btn-download-csv" class="btn btn-secondary btn-sm">
+              📥 Export CSV
             </button>
-            <button id="btn-restart" class="btn btn-primary">
-              🔄 Retest New Session
+            <button id="btn-restart" class="btn btn-primary btn-sm">
+              🔄 Retest <span class="kbd-pill">Space ↵</span>
             </button>
           </div>
         </div>
@@ -173,25 +180,25 @@
         <div class="metrics-grid">
           <div class="metric-card">
             <div class="label">Detection Accuracy</div>
-            <div id="res-accuracy" class="val" style="color:var(--accent-cyan);">0%</div>
+            <div id="res-accuracy" class="val text-cyan">0%</div>
             <div class="sub">Change localization accuracy</div>
           </div>
 
           <div class="metric-card">
             <div class="label">Avg Reaction Time</div>
-            <div id="res-avg-rt" class="val" style="color:var(--accent-blue);">0.00s</div>
+            <div id="res-avg-rt" class="val text-blue">0.00s</div>
             <div class="sub">Latency upon modified image</div>
           </div>
 
           <div class="metric-card">
             <div class="label">Successful Hits</div>
-            <div id="res-total-hits" class="val" style="color:var(--accent-green);">0 / 6</div>
+            <div id="res-total-hits" class="val text-green">0 / 6</div>
             <div class="sub">Target changes identified</div>
           </div>
 
           <div class="metric-card">
             <div class="label">Blindness Misses</div>
-            <div id="res-total-misses" class="val" style="color:var(--accent-red);">0</div>
+            <div id="res-total-misses" class="val text-red">0</div>
             <div class="sub">Inattention effect triggered</div>
           </div>
         </div>
@@ -202,8 +209,8 @@
           <p id="insight-text">Analyzing participant trial performance...</p>
         </div>
 
-        <!-- Detailed Trial Breakdown Table -->
-        <h3 style="font-size:1.15rem; font-weight:700; margin-bottom:0.85rem;">Trial-by-Trial Event Log</h3>
+        <!-- Detailed Trial Breakdown Table (Internally scrollable if needed) -->
+        <div class="table-section-title">Trial-by-Trial Event Log</div>
         <div class="table-container">
           <table>
             <thead>

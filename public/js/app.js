@@ -33,6 +33,7 @@
     badgeUsername: document.getElementById('badge-username'),
     btnNavHistory: document.getElementById('btn-nav-history'),
     btnSoundToggle: document.getElementById('btn-sound-toggle'),
+    btnFullscreen: document.getElementById('btn-fullscreen'),
     
     // Setup inputs
     inputUsername: document.getElementById('input-username'),
@@ -49,6 +50,7 @@
     arenaCard: document.getElementById('arena-card'),
     arenaContent: document.getElementById('arena-content'),
     arenaOverlay: document.getElementById('arena-overlay'),
+    promptIdle: document.getElementById('prompt-idle'),
     feedbackBanner: document.getElementById('feedback-banner'),
     feedbackText: document.getElementById('feedback-text'),
     btnNextTrial: document.getElementById('btn-next-trial'),
@@ -90,6 +92,20 @@
     el.btnNextTrial.addEventListener('click', proceedToNextTrial);
     el.btnRestart.addEventListener('click', restartExperiment);
 
+    if (el.btnFullscreen) {
+      el.btnFullscreen.addEventListener('click', toggleFullscreen);
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+      if (el.btnFullscreen) {
+        if (document.fullscreenElement) {
+          el.btnFullscreen.textContent = '⛷ Exit Fullscreen';
+        } else {
+          el.btnFullscreen.textContent = '⛶ Fullscreen';
+        }
+      }
+    });
+
     el.btnSoundToggle.addEventListener('click', () => {
       window.soundFx.enabled = !window.soundFx.enabled;
       el.btnSoundToggle.textContent = window.soundFx.enabled ? '🔊 Sound On' : '🔇 Muted';
@@ -107,15 +123,70 @@
     el.btnClearHistory.addEventListener('click', clearHistory);
     el.btnDownloadCsv.addEventListener('click', downloadCsv);
 
-    // Keyboard navigation (Space to advance / start)
+    // Universal Space & Enter Keyboard Navigation
     window.addEventListener('keydown', (e) => {
+      const isInputFocused = (document.activeElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName));
+
+      // F key toggles fullscreen (when not typing)
+      if ((e.key === 'f' || e.key === 'F') && !isInputFocused) {
+        e.preventDefault();
+        toggleFullscreen();
+        return;
+      }
+
+      // Space key actions
       if (e.code === 'Space') {
+        // 1. Advance trial if feedback active
         if (state.phase === 'feedback' && el.btnNextTrial.style.display !== 'none') {
           e.preventDefault();
           proceedToNextTrial();
+          return;
+        }
+        // 2. Start experiment if on setup screen and not typing
+        if (el.viewSetup.classList.contains('active') && !isInputFocused) {
+          e.preventDefault();
+          startExperiment();
+          return;
+        }
+        // 3. Restart if on results screen
+        if (el.viewResults.classList.contains('active') && !isInputFocused) {
+          e.preventDefault();
+          restartExperiment();
+          return;
+        }
+      }
+
+      // Enter key actions
+      if (e.key === 'Enter') {
+        if (el.viewSetup.classList.contains('active')) {
+          e.preventDefault();
+          startExperiment();
+          return;
+        }
+        if (state.phase === 'feedback' && el.btnNextTrial.style.display !== 'none') {
+          e.preventDefault();
+          proceedToNextTrial();
+          return;
+        }
+        if (el.viewResults.classList.contains('active')) {
+          e.preventDefault();
+          restartExperiment();
+          return;
         }
       }
     });
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.warn('Fullscreen request denied:', err);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
   }
 
   // Switch View
@@ -154,8 +225,9 @@
     state.activeScene = SCENES[index];
     state.phase = 'countdown';
 
-    // Clear feedback and ripples
+    // Clear feedback and ripples, restore idle dock
     clearArenaOverlays();
+    if (el.promptIdle) el.promptIdle.style.display = 'flex';
     el.feedbackBanner.style.display = 'none';
     el.btnNextTrial.style.display = 'none';
 
@@ -185,7 +257,7 @@
           runContinuousFlickerProtocol();
         }
       }
-    }, 800);
+    }, 700);
   }
 
   // Single-Flicker Protocol:
@@ -212,7 +284,7 @@
         clearInterval(progressInterval);
         triggerBlankScreen();
       }
-    }, 25);
+    }, 20);
   }
 
   function triggerBlankScreen() {
@@ -243,9 +315,8 @@
   }
 
   // Continuous Flicker Protocol (Rensink Paradigm):
-  // Alternates A -> Blank -> B -> Blank -> A -> Blank ... until user clicks!
   function runContinuousFlickerProtocol() {
-    state.phase = 'imageB'; // User can click anytime
+    state.phase = 'imageB';
     setStagePill('active', 'Continuous Flicker: Spot The Change & Click!');
     state.flickerState = 'A';
     state.startTime = performance.now();
@@ -330,7 +401,7 @@
       clickY <= (target.y + target.h + pad)
     );
 
-    // If continuous flicker was active, freeze on Image B so user sees the change
+    // Freeze on Image B
     el.arenaCard.classList.remove('blank-screen');
     el.arenaContent.innerHTML = state.activeScene.renderB();
 
@@ -358,7 +429,7 @@
     };
     state.trials.push(trialRecord);
 
-    // Show feedback banner
+    // Show feedback banner in dock
     showTrialFeedback(isHit, reactionTime);
   }
 
@@ -386,19 +457,22 @@
   }
 
   function showTrialFeedback(isHit, rt) {
+    if (el.promptIdle) el.promptIdle.style.display = 'none';
     el.feedbackBanner.style.display = 'flex';
     el.btnNextTrial.style.display = 'inline-flex';
 
     if (isHit) {
-      el.feedbackBanner.className = 'feedback-banner hit';
-      el.feedbackText.innerHTML = `<strong>Spot On! Correct Change Detected.</strong> Reaction Time: <span class="font-mono">${(rt / 1000).toFixed(3)}s</span>. (${state.activeScene.changeDescription})`;
+      el.feedbackBanner.className = 'dock-feedback hit';
+      el.feedbackText.innerHTML = `✓ <strong>Spot On! Correct Change Detected.</strong> RT: <span class="font-mono">${(rt / 1000).toFixed(3)}s</span>. (${state.activeScene.changeDescription})`;
     } else {
-      el.feedbackBanner.className = 'feedback-banner miss';
-      el.feedbackText.innerHTML = `<strong>Inattention Blindness Effect! Missed Change.</strong> The change was highlighted in yellow (${state.activeScene.changeDescription}).`;
+      el.feedbackBanner.className = 'dock-feedback miss';
+      el.feedbackText.innerHTML = `✕ <strong>Inattention Blindness Effect! Missed Change.</strong> Target highlighted (${state.activeScene.changeDescription}).`;
     }
 
     const isLast = (state.currentTrialIndex + 1 >= SCENES.length);
-    el.btnNextTrial.textContent = isLast ? 'View Final Results →' : 'Next Trial (Space) →';
+    el.btnNextTrial.innerHTML = isLast 
+      ? `View Results <span class="kbd-pill">Space ↵</span>` 
+      : `Next Trial <span class="kbd-pill">Space ↵</span>`;
   }
 
   function proceedToNextTrial() {
@@ -467,9 +541,9 @@
     state.trials.forEach((t, i) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><span class="font-mono text-dim">#${i + 1}</span></td>
+        <td><span class="font-mono" style="color:#64748b;">#${i + 1}</span></td>
         <td><strong>${escapeHtml(t.scenario)}</strong></td>
-        <td><span class="text-muted">${escapeHtml(t.targetName)}</span></td>
+        <td><span style="color:#94a3b8;">${escapeHtml(t.targetName)}</span></td>
         <td>
           <span class="badge ${t.correct ? 'badge-hit' : 'badge-miss'}">
             ${t.correct ? '✓ Hit' : '✕ Miss'}
@@ -530,7 +604,7 @@
   function renderHistoryTable() {
     el.historyListBody.innerHTML = '';
     if (!state.sessionsHistory || state.sessionsHistory.length === 0) {
-      el.historyListBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#64748b; padding:2rem;">No test sessions recorded yet. Complete a trial to see results here!</td></tr>';
+      el.historyListBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#64748b; padding:1.5rem;">No test sessions recorded yet. Complete a trial to see results here!</td></tr>';
       return;
     }
 

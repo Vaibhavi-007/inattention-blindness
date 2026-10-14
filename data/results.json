@@ -1,1 +1,101 @@
-[]
+[
+  {
+    "username": "Rishab Bajaj",
+    "paradigm": "single-flicker",
+    "stimulusDuration": 2500,
+    "blankDuration": 350,
+    "accuracy": 33,
+    "avgReactionTime": 1280,
+    "totalTrials": 6,
+    "hits": 2,
+    "misses": 4,
+    "trials": [
+      {
+        "scenario": "Downtown Intersection",
+        "targetName": "Red fire hydrant on the right sidewalk disappeared",
+        "correct": false,
+        "reactionTime": 2585,
+        "clickPos": {
+          "x": 621,
+          "y": 336
+        },
+        "targetCenter": {
+          "x": 698,
+          "y": 383
+        }
+      },
+      {
+        "scenario": "Executive Workspace",
+        "targetName": "Steaming ceramic coffee mug on the desk disappeared",
+        "correct": false,
+        "reactionTime": 1213,
+        "clickPos": {
+          "x": 159,
+          "y": 130
+        },
+        "targetCenter": {
+          "x": 628,
+          "y": 323
+        }
+      },
+      {
+        "scenario": "Airport Runway & Jet",
+        "targetName": "Large jet engine under the aircraft wing disappeared",
+        "correct": true,
+        "reactionTime": 1316,
+        "clickPos": {
+          "x": 291,
+          "y": 276
+        },
+        "targetCenter": {
+          "x": 305,
+          "y": 295
+        }
+      },
+      {
+        "scenario": "Cozy Living Room",
+        "targetName": "Large round wall clock above the sofa disappeared",
+        "correct": false,
+        "reactionTime": 1587,
+        "clickPos": {
+          "x": 437,
+          "y": 300
+        },
+        "targetCenter": {
+          "x": 400,
+          "y": 80
+        }
+      },
+      {
+        "scenario": "Sunny Park Picnic",
+        "targetName": "Red kite flying high in the blue sky disappeared",
+        "correct": false,
+        "reactionTime": 1560,
+        "clickPos": {
+          "x": 368,
+          "y": 100
+        },
+        "targetCenter": {
+          "x": 595,
+          "y": 80
+        }
+      },
+      {
+        "scenario": "Chemistry Laboratory",
+        "targetName": "Erlenmeyer chemical flask on the counter disappeared",
+        "correct": true,
+        "reactionTime": 1244,
+        "clickPos": {
+          "x": 403,
+          "y": 317
+        },
+        "targetCenter": {
+          "x": 420,
+          "y": 328
+        }
+      }
+    ],
+    "id": "mv7d1dw5khfoo",
+    "createdAt": "2026-10-14T00:17:05.429Z"
+  }
+]
