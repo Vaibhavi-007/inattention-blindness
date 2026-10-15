@@ -7,9 +7,9 @@
     username: 'Rishab Bajaj',
     paradigm: 'single-flicker', // 'single-flicker' | 'continuous-flicker'
     stimulusDuration: 2500,     // ms for Image A
-    blankDuration: 350,         // ms for Black Screen
+    blankDuration: 2500,        // ms for Black Screen (persists for same duration as images)
     flickerCycleDuration: 600,  // ms per image in continuous flicker
-    flickerBlankDuration: 150,  // ms blank in continuous flicker
+    flickerBlankDuration: 600,  // ms blank in continuous flicker (equal to image duration)
     currentTrialIndex: 0,
     trials: [],                 // results of each trial
     activeScene: null,
@@ -87,6 +87,17 @@
       state.username = e.target.value.trim() || 'Rishab Bajaj';
       el.badgeUsername.textContent = state.username;
     });
+
+    if (el.inputStimulusTime) {
+      el.inputStimulusTime.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10) || 2500;
+        state.stimulusDuration = val;
+        state.blankDuration = val;
+        if (el.inputBlankTime) {
+          el.inputBlankTime.value = val;
+        }
+      });
+    }
 
     el.btnStart.addEventListener('click', startExperiment);
     el.btnNextTrial.addEventListener('click', proceedToNextTrial);
@@ -205,7 +216,7 @@
     state.username = el.inputUsername.value.trim() || 'Rishab Bajaj';
     state.paradigm = el.selectParadigm.value;
     state.stimulusDuration = parseInt(el.inputStimulusTime.value, 10) || 2500;
-    state.blankDuration = parseInt(el.inputBlankTime.value, 10) || 350;
+    state.blankDuration = state.stimulusDuration; // Same duration as the image
     
     state.currentTrialIndex = 0;
     state.trials = [];
@@ -262,7 +273,7 @@
 
   // Single-Flicker Protocol:
   // Phase 1: Show Scene A for stimulusDuration ms
-  // Phase 2: Show Black Screen for blankDuration ms
+  // Phase 2: Show Black Screen for EXACT same duration (stimulusDuration ms)
   // Phase 3: Show Scene B and wait for click
   function runSingleFlickerProtocol() {
     state.phase = 'imageA';
@@ -289,16 +300,27 @@
 
   function triggerBlankScreen() {
     state.phase = 'blank';
-    setStagePill('blank', 'Phase 2: Blank Screen (Flicker Mask)');
+    setStagePill('blank', 'Phase 2: Black Screen (Equal Duration)');
     window.soundFx.playTick();
 
     el.arenaCard.classList.add('blank-screen');
     el.arenaContent.innerHTML = '';
-    el.progressBarFill.style.width = '100%';
+    
+    // The black screen persists for the EXACT SAME duration as the image
+    const duration = state.stimulusDuration;
+    const startTime = Date.now();
+    el.progressBarFill.style.width = '0%';
 
-    setTimeout(() => {
-      triggerModifiedImage();
-    }, state.blankDuration);
+    const blankProgressInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const pct = Math.min(100, (elapsed / duration) * 100);
+      el.progressBarFill.style.width = `${pct}%`;
+
+      if (elapsed >= duration) {
+        clearInterval(blankProgressInterval);
+        triggerModifiedImage();
+      }
+    }, 20);
   }
 
   function triggerModifiedImage() {
@@ -319,6 +341,8 @@
     state.phase = 'imageB';
     setStagePill('active', 'Continuous Flicker: Spot The Change & Click!');
     state.flickerState = 'A';
+    // Ensure image and black screen persist for the exact same duration
+    state.flickerBlankDuration = state.flickerCycleDuration;
     state.startTime = performance.now();
     startLiveTicker();
 
